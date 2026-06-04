@@ -22,17 +22,20 @@ class ChatResource
 
     public function findContacts(string $instance, ?string $where = null): array
     {
-        $body = $where ? ['where' => ['remoteJid' => $where]] : [];
+        $body = $where ? ['where' => ['id' => $where]] : [];
 
         return $this->client->post("chat/findContacts/{$instance}", $body);
     }
 
-    public function findMessages(string $instance, array $where = [], int $limit = 20): array
+    public function findMessages(string $instance, array $where = [], ?int $limit = null): array
     {
-        return $this->client->post("chat/findMessages/{$instance}", [
-            'where' => $where,
-            'limit' => $limit,
-        ]);
+        $body = ['where' => $where];
+
+        if ($limit !== null) {
+            $body['limit'] = $limit;
+        }
+
+        return $this->client->post("chat/findMessages/{$instance}", $body);
     }
 
     public function markAsRead(string $instance, array $readMessages): array

@@ -88,13 +88,13 @@ class InstanceResourceTest extends TestCase
         Http::assertSent(fn ($r) => $r->method() === 'DELETE');
     }
 
-    public function test_restart_sends_put(): void
+    public function test_restart_sends_post(): void
     {
         Http::fake(['*/instance/restart/main' => Http::response([], 200)]);
 
         $this->client->instance()->restart('main');
 
-        Http::assertSent(fn ($r) => $r->method() === 'PUT'
+        Http::assertSent(fn ($r) => $r->method() === 'POST'
             && str_ends_with($r->url(), '/instance/restart/main')
         );
     }

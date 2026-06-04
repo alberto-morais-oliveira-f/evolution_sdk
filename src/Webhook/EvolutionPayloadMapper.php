@@ -58,7 +58,7 @@ class EvolutionPayloadMapper
             'type' => $type,
             'body' => $body,
             'media_url' => $mediaUrl,
-            'timestamp' => Carbon::createFromTimestamp($data['messageTimestamp'] ?? now()->timestamp),
+            'timestamp' => now()->setTimestamp($data['messageTimestamp'] ?? now()->timestamp),
         ];
     }
 

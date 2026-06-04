@@ -41,7 +41,7 @@ class InstanceResource
 
     public function restart(string $instance): array
     {
-        return $this->client->put("instance/restart/{$instance}");
+        return $this->client->post("instance/restart/{$instance}");
     }
 
     public function logout(string $instance): array
