@@ -97,8 +97,10 @@ class MessageResourceTest extends TestCase
         Http::fake(['*/message/sendButtons/*' => Http::response([], 201)]);
 
         $this->client->message()->sendButtons('main', '5511999999999', [
-            'title'   => 'Escolha',
-            'buttons' => [['buttonId' => '1', 'buttonText' => ['displayText' => 'Opção 1']]],
+            'title'       => 'Escolha',
+            'description' => 'Selecione uma opção',
+            'footer'      => '',
+            'buttons'     => [['title' => 'reply', 'displayText' => 'Opção 1', 'id' => '1']],
         ]);
 
         Http::assertSent(fn ($r) => $r['number'] === '5511999999999'

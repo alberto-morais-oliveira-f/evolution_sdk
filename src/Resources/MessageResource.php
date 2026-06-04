@@ -25,12 +25,11 @@ class MessageResource
         ], $media));
     }
 
-    public function sendAudio(string $instance, string $to, string $audioUrl, bool $ptt = true): array
+    public function sendAudio(string $instance, string $to, string $audioUrl): array
     {
         return $this->client->post("message/sendWhatsAppAudio/{$instance}", [
-            'number'   => $to,
-            'audio'    => $audioUrl,
-            'encoding' => true,
+            'number' => $to,
+            'audio'  => $audioUrl,
         ]);
     }
 
