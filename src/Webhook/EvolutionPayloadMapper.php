@@ -62,6 +62,68 @@ class EvolutionPayloadMapper
         ];
     }
 
+    /**
+     * Normalize a messages.update payload entry into a uniform shape.
+     * Evolution sends either a flat object { id, status, ... } or
+     * a nested object { key: { id }, update: { status } }.
+     *
+     * @param  array<string, mixed>  $update
+     * @return array{evolution_id: string|null, status: string|null}
+     */
+    public function mapMessageUpdate(array $update): array
+    {
+        $evolutionId = $update['id'] ?? $update['key']['id'] ?? null;
+        $rawStatus = strtolower((string) ($update['status'] ?? $update['update']['status'] ?? ''));
+
+        $status = match ($rawStatus) {
+            'pending' => 'pending',
+            'server_ack' => 'server_ack',
+            'delivery_ack' => 'delivery_ack',
+            'read', 'played' => 'read',
+            default => null,
+        };
+
+        return [
+            'evolution_id' => $evolutionId,
+            'status' => $status,
+        ];
+    }
+
+    /**
+     * Normalize a connection.update payload into a uniform shape.
+     *
+     * @param  array<string, mixed>  $payload
+     * @return array{instance: string, status: string}
+     */
+    public function mapConnectionUpdate(array $payload): array
+    {
+        $state = $payload['data']['state'] ?? 'disconnected';
+
+        $status = match ($state) {
+            'open' => 'connected',
+            'close' => 'disconnected',
+            default => 'qr_pending',
+        };
+
+        return [
+            'instance' => $payload['instance'] ?? '',
+            'status' => $status,
+        ];
+    }
+
+    /**
+     * Extract the QR code base64 string from a qrcode.updated payload.
+     * Handles Evolution v1 (base64 at data root) and v2 (wrapped in qrcode key).
+     *
+     * @param  array<string, mixed>  $payload
+     */
+    public function extractQrCode(array $payload): ?string
+    {
+        $data = $payload['data'] ?? [];
+
+        return $data['qrcode']['base64'] ?? $data['base64'] ?? null;
+    }
+
     private function extractPhone(string $remoteJid): string
     {
         return preg_replace('/@.*/', '', $remoteJid) ?? $remoteJid;

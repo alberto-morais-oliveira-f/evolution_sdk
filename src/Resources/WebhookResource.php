@@ -10,15 +10,24 @@ class WebhookResource
 {
     public function __construct(private readonly EvolutionClient $client) {}
 
-    public function set(string $instance, string $url, array $events = [], bool $webhookBase64 = false, bool $byEvents = false, bool $enabled = true): array
+    /**
+     * @param  array<string, string>  $headers  Custom headers forwarded with each webhook delivery.
+     */
+    public function set(string $instance, string $url, array $events = [], bool $webhookBase64 = false, bool $byEvents = false, bool $enabled = true, array $headers = []): array
     {
-        return $this->client->post("webhook/set/{$instance}", [
+        $payload = [
             'url'             => $url,
             'enabled'         => $enabled,
             'webhookBase64'   => $webhookBase64,
             'webhookByEvents' => $byEvents,
             'events'          => $events ?: $this->defaultEvents(),
-        ]);
+        ];
+
+        if (! empty($headers)) {
+            $payload['headers'] = $headers;
+        }
+
+        return $this->client->post("webhook/set/{$instance}", $payload);
     }
 
     public function get(string $instance): array

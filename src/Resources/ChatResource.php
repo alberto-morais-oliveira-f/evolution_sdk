@@ -79,4 +79,47 @@ class ChatResource
             'convertToMp4' => $convertToMp4,
         ]);
     }
+
+    /**
+     * Fetch a single message by its Evolution message ID.
+     *
+     * @return array<string, mixed>
+     */
+    public function findById(string $instance, string $messageId, int $timeout = 8): array
+    {
+        $response = $this->client->postFast("chat/findMessages/{$instance}", [
+            'where' => ['key' => ['id' => $messageId]],
+            'limit' => 1,
+        ], $timeout);
+
+        if (is_array($response) && array_is_list($response)) {
+            return $response[0] ?? [];
+        }
+
+        return $response['messages']['records'][0] ?? [];
+    }
+
+    /**
+     * Fetch all messages for an instance (API ignores JID filter).
+     * Returns records sorted by timestamp desc.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function findAll(string $instance, int $limit = 10000, int $timeout = 120): array
+    {
+        $response = $this->client->postFast("chat/findMessages/{$instance}", [
+            'where' => (object) [],
+            'limit' => $limit,
+        ], $timeout);
+
+        if (isset($response['messages']['records']) && is_array($response['messages']['records'])) {
+            return $response['messages']['records'];
+        }
+
+        if (is_array($response) && array_is_list($response)) {
+            return $response;
+        }
+
+        return [];
+    }
 }
