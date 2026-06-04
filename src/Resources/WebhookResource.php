@@ -10,13 +10,14 @@ class WebhookResource
 {
     public function __construct(private readonly EvolutionClient $client) {}
 
-    public function set(string $instance, string $url, array $events = [], bool $webhookBase64 = false, bool $byEvents = false): array
+    public function set(string $instance, string $url, array $events = [], bool $webhookBase64 = false, bool $byEvents = false, bool $enabled = true): array
     {
         return $this->client->post("webhook/set/{$instance}", [
-            'url'           => $url,
-            'webhookBase64' => $webhookBase64,
+            'url'             => $url,
+            'enabled'         => $enabled,
+            'webhookBase64'   => $webhookBase64,
             'webhookByEvents' => $byEvents,
-            'events'        => $events ?: $this->defaultEvents(),
+            'events'          => $events ?: $this->defaultEvents(),
         ]);
     }
 

@@ -29,7 +29,14 @@ class InstanceResource
 
     public function connectionState(string $instance): array
     {
-        return $this->client->get("instance/connectionState/{$instance}");
+        $data = $this->client->get("instance/connectionState/{$instance}");
+
+        // v2 returns { instance: { instanceName, state } }; normalize to { state, instanceName }
+        if (isset($data['instance']) && is_array($data['instance'])) {
+            return $data['instance'];
+        }
+
+        return $data;
     }
 
     public function restart(string $instance): array

@@ -65,7 +65,7 @@ class InstanceResourceTest extends TestCase
 
         $result = $this->client->instance()->connectionState('main');
 
-        $this->assertSame('open', $result['instance']['state']);
+        $this->assertSame('open', $result['state']);
     }
 
     public function test_logout_sends_delete(): void

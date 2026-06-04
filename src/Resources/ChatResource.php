@@ -67,4 +67,13 @@ class ChatResource
             'status' => $status,
         ]);
     }
+
+    /** @param array<string, mixed> $message */
+    public function getMediaBase64(string $instance, array $message, bool $convertToMp4 = false): array
+    {
+        return $this->client->post("chat/getBase64FromMediaMessage/{$instance}", [
+            'message'      => $message,
+            'convertToMp4' => $convertToMp4,
+        ]);
+    }
 }
