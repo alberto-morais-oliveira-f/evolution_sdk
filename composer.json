@@ -1,6 +1,5 @@
 {
     "name": "am2tec/evolution-sdk",
-    "version": "1.2.0",
     "description": "Laravel SDK for Evolution API (WhatsApp gateway).",
     "type": "library",
     "license": "MIT",
